@@ -1,0 +1,43 @@
+- name: Jenkins Master play
+  hosts: jenkins-master
+  tasks:
+  - name: Add Global Credentials to Jenkins 
+    jenkins_script:
+     script: |
+      import com.cloudbees.jenkins.plugins.sshcredentials.impl.*
+      import com.cloudbees.plugins.credentials.*
+      import com.cloudbees.plugins.credentials.common.*
+      import com.cloudbees.plugins.credentials.domains.Domain
+      import com.cloudbees.plugins.credentials.impl.*
+      import hudson.util.Secret
+      import java.nio.file.Files
+      import jenkins.model.Jenkins
+      import net.sf.json.JSONObject
+      import org.jenkinsci.plugins.plaincredentials.impl.*      
+      def jenkinsMasterKeyParameters = [
+        description:  '${cred_id}',
+        id:           '${cred_id}',
+        secret:       'PleaseUseOnePasswordStrongEnough!',
+        userName:     '${usrname}',
+        key:          new BasicSSHUserPrivateKey.DirectEntryPrivateKeySource('''{{ lookup('file', '{{ key_name }}') }}''')
+      ]     
+      Jenkins jenkins = Jenkins.getInstance()     
+      def domain = Domain.global()      
+      def store = jenkins.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()     
+      def privateKey = new BasicSSHUserPrivateKey(
+        CredentialsScope.GLOBAL,
+        jenkinsMasterKeyParameters.id,
+        jenkinsMasterKeyParameters.userName,
+        jenkinsMasterKeyParameters.key,
+        jenkinsMasterKeyParameters.secret,
+        jenkinsMasterKeyParameters.description
+      )     
+      store.addCredentials(domain, privateKey)      
+      jenkins.save()
+     args:
+       cred_id: "{{ cred_id_name }}"
+       usrname: "{{ cred_usr }}"
+     user: "{{ jen_usr }}"
+     password: "{{ jen_pwd }}"
+     url: http://localhost:8080
+     validate_certs: no

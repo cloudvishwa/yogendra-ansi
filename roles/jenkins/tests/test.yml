@@ -1,0 +1,8 @@
+---
+- name: Install Jenkins
+  hosts: jenkins-master
+  gather_facts: false
+  become: true
+  tasks:
+  - import_role:
+      name: jenkins

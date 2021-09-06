@@ -1,0 +1,6 @@
+---
+# vars file for jenkins
+jenkins_plugins:
+  - Deploy
+  - Artifactory
+  - sonar

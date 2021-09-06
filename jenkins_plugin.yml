@@ -1,0 +1,32 @@
+- name: Jenkins Master play
+  hosts: jenkins-master
+  vars:
+    jenkins_plugins:
+      - Deploy
+      - Artifactory
+      - sonar
+  tasks:
+  - name: install plugin
+    jenkins_plugin:
+      name: "{{ item }}"
+      state: latest
+      url_username: admin
+      url_password: d32227c75b7848b1ac0f5958d1598641
+    with_items: "{{ jenkins_plugins }}"
+    register: plugin_output
+
+  - name: Initiate the fact
+    set_fact:
+      jenkins_restart_required: no
+
+  - name: Check if restart is required by any of the plugins
+    set_fact:
+      jenkins_restart_required: yes
+    when: item.changed
+    with_items: "{{ plugin_output.results }}"
+
+  - name: Restart Jenkins if required
+    service:
+      name: jenkins
+      state: restarted
+    when: jenkins_restart_required

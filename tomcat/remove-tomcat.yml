@@ -1,0 +1,41 @@
+---
+- hosts: jenkins-slave
+  become: yes
+  tasks:
+  - name: Stop Tomcat service
+    systemd:
+      name: tomcat
+      state: stopped
+
+  - name: Remove tomcat folder
+    file:
+      path: /opt/tomcat
+      state: absent
+
+  - name: Remove tomcat folder
+    file:
+      path: /etc/systemd/system/tomcat.service
+      state: absent
+
+  - name: install JDK 11
+    yum:
+      name: java-11-openjdk-devel
+      state: absent
+
+  - name: add tomcat user
+    user:
+      name: tomcat
+      state: absent
+
+  - name: add tomcat group
+    group:
+      name: tomcat
+      state: absent
+
+  - name: permit traffic for jenkins port 8080/tcp
+    firewalld:
+      zone: public
+      port: 8080/tcp
+      permanent: yes
+      immediate: yes
+      state: disabled
