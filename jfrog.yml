@@ -1,0 +1,41 @@
+---
+- hosts: jenkins-slave
+  become: yes
+  tasks:
+  - name: Update and upgrade yum packages
+    yum: update_cache=yes
+    when: ansible_os_family == "RedHat"
+
+  - name: install JDK 11
+    yum:
+      name: ['java-1.8.0-openjdk-devel', 'rsync', 'net-tools', 'wget']
+      state: present
+
+  - name: download jfrog-artifactory-rpms.repo
+    get_url:
+      url: https://releases.jfrog.io/artifactory/artifactory-rpms/artifactory-rpms.repo
+      dest: /etc/yum.repos.d/jfrog-artifactory-rpms.repo
+
+  - name: Update and upgrade yum packages
+    yum: update_cache=yes
+    when: ansible_os_family == "RedHat"
+
+  - name: jfrog-artifactory-oss
+    yum:
+      name: ['jfrog-artifactory-oss']
+      state: present
+
+  - name: Start and enable jfrog service
+    systemd:
+      name: artifactory.service
+      state: started
+      enabled: true
+      daemon_reload: true
+
+  #- name: permit traffic for jfrog port 8082/tcp
+  #  firewalld:
+  #    zone: public
+  #    port: 8082/tcp
+  #    permanent: yes
+  #    immediate: yes
+  #    state: enabled
