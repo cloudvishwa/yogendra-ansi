@@ -6,3 +6,10 @@
   tasks:
   - import_role:
       name: jenkins
+
+  - name: install JDK 11
+    yum:
+      name: ['java-1.8.0-openjdk-devel', 'git']
+      state: present
+
+

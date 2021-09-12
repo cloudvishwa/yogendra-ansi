@@ -18,6 +18,11 @@
       name: java-1.8.0-openjdk
       state: present
 
+  - name: install JDK 11
+    yum:
+      name: ['java-1.8.0-openjdk-devel', 'git']
+      state: present
+
   - name: create project directory
     file:
       path: "{{ path_list }}"
