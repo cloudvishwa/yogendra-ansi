@@ -4,3 +4,5 @@ jenkins_plugins:
   - Deploy
   - Artifactory
   - sonar
+  - ssh-slaves
+  - ssh-agent

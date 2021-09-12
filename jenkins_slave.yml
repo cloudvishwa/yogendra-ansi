@@ -1,7 +1,36 @@
+---
+
+- name: Jenkins slave play
+  hosts: jenkins-slave
+  tasks:
+  - name: install wget
+    yum:
+      name: wget
+      state: present
+
+  - name: install epel-release
+    yum:
+      name: epel-release
+      state: present
+
+  - name: install openjdk
+    yum:
+      name: java-1.8.0-openjdk
+      state: present
+
+  - name: create project directory
+    file:
+      path: "{{ path_list }}"
+      state: directory
+      mode: 0755
+      owner: centos
+      group: centos
+
 - name: Jenkins Master play
   hosts: jenkins-master
   tasks:
-  - name: Add Global Credentials to Jenkins 
+
+  - name: Add Slave to Jenkins 
     jenkins_script:
      script: |
       import hudson.model.*

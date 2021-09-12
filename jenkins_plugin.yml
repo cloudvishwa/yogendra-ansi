@@ -1,3 +1,4 @@
+---
 - name: Jenkins Master play
   hosts: jenkins-master
   vars:
@@ -6,6 +7,10 @@
       - Artifactory
       - sonar
   tasks:
+  - name: Restart Jenkins if required
+    service:
+      name: jenkins
+      state: restarted
   - name: install plugin
     jenkins_plugin:
       name: "{{ item }}"
