@@ -57,10 +57,36 @@
       enabled: true
       daemon_reload: true
 
-  - name: permit traffic for jenkins port 8080/tcp
-    firewalld:
-      zone: public
-      port: 8080/tcp
-      permanent: yes
-      immediate: yes
-      state: enabled
+  - name: add lines to tomcat-users
+    lineinfile: 
+      dest: /opt/tomcat/conf/tomcat-users.xml
+      insertbefore: '</tomcat-users>'
+      line: '{{ item }}'
+    with_items:
+      - '<role rolename="tomcat"/>'
+      - '<role rolename="manager-script"/>'
+      - '<role rolename="manager-gui"/>'
+      - '<role rolename="manager-jmx"/>'
+      - '<role rolename="manager-status"/>'
+      - '<role rolename="manager"/>'
+      - '<user password="Reset123" roles="admin,admin-script,manager-gui,manager-script,manager-jmx,manager-status" username="tomcat"/>'
+
+  - name: Comment  allow in meta-inf tomcat-users
+    lineinfile: 
+      dest: /opt/tomcat/webapps/manager/META-INF/context.xml
+      insertbefore: '<Context'
+      line: '<!--'
+
+  - name: Comment  allow in meta-inf tomcat-users
+    lineinfile: 
+      dest: /opt/tomcat/webapps/manager/META-INF/context.xml
+      insertbefore: '</Context>'
+      line: '-->'
+
+  #- name: permit traffic for jenkins port 8080/tcp
+  #  firewalld:
+  #    zone: public
+  #    port: 8080/tcp
+  #    permanent: yes
+  #    immediate: yes
+  #    state: enabled

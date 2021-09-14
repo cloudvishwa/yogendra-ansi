@@ -7,9 +7,9 @@
   - import_role:
       name: jenkins
 
-  - name: install JDK 11
+  - name: install git
     yum:
-      name: ['java-1.8.0-openjdk-devel', 'git']
+      name: ['git']
       state: present
 
 

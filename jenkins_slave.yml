@@ -20,7 +20,7 @@
 
   - name: install JDK 11
     yum:
-      name: ['java-1.8.0-openjdk-devel', 'git']
+      name: ['java-11-openjdk-devel', 'git', 'maven']
       state: present
 
   - name: create project directory

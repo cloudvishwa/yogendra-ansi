@@ -6,3 +6,4 @@ jenkins_plugins:
   - sonar
   - ssh-slaves
   - ssh-agent
+  - pipeline
