@@ -57,8 +57,8 @@
       enabled: true
       daemon_reload: true
 
-  - name: add lines to tomcat-users
-    lineinfile: 
+   - name: add lines to tomcat-users
+    lineinfile:
       dest: /opt/tomcat/conf/tomcat-users.xml
       insertbefore: '</tomcat-users>'
       line: '{{ item }}'
@@ -71,17 +71,23 @@
       - '<role rolename="manager"/>'
       - '<user password="Reset123" roles="admin,admin-script,manager-gui,manager-script,manager-jmx,manager-status" username="tomcat"/>'
 
-  - name: Comment  allow in meta-inf tomcat-users
-    lineinfile: 
-      dest: /opt/tomcat/webapps/manager/META-INF/context.xml
-      insertbefore: '<Context'
-      line: '<!--'
 
-  - name: Comment  allow in meta-inf tomcat-users
-    lineinfile: 
-      dest: /opt/tomcat/webapps/manager/META-INF/context.xml
-      insertbefore: '</Context>'
-      line: '-->'
+  - name: Meta-INF contextxml
+    copy:
+       src: context.xml
+       dest: /opt/tomcat/webapps/manager/META-INF/
+       mode: 0755
+
+  - name: Meta-INF contextxml
+    copy:
+       src: context.xml
+       dest: /opt/tomcat/webapps/host-manager/META-INF/
+       mode: 0755
+
+  - name: Re-Start
+    systemd:
+      name: tomcat
+      state: restarted
 
   #- name: permit traffic for jenkins port 8080/tcp
   #  firewalld:
